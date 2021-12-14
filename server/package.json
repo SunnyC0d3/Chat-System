@@ -1,0 +1,36 @@
+{
+  "name": "chat-system",
+  "version": "1.0.0",
+  "description": "Building a chat system using React, NodeJS, Mongodb",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server/index.js",
+	  "start:server": "node server/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SunnyC0d3/Chat-System.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SunnyC0d3/Chat-System/issues"
+  },
+  "homepage": "https://github.com/SunnyC0d3/Chat-System#readme",
+  "devDependencies": {
+    "eslint": "^8.4.1",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.25.3",
+    "nodemon": "^2.0.15"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.1.1",
+    "morgan": "^1.10.0",
+    "socket.io": "^4.4.0",
+    "uuid": "^8.3.2"
+  }
+}
