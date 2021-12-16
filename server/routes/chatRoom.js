@@ -1,5 +1,5 @@
 import express from 'express';
-import chatRoom from '../controllers/chatRoom';
+import chatRoom from '../controllers/chatRoom.js';
 
 const router = express.Router();
 

@@ -1,5 +1,6 @@
 const validationTypes = {
   string: 'string',
+  enum: 'enum',
 };
 
-module.exports = validationTypes;
+export default validationTypes;

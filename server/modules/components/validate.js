@@ -1,6 +1,7 @@
-const validationTypes = require('./validationTypes');
-const getError = require('./errors');
-const isString = require('./validators/isString');
+import validationTypes from './validationTypes.js';
+import getError from './errors.js';
+import isString from './validators/isString.js';
+import isEnum from './validators/isEnum.js';
 
 function makeValidation(cb) {
   const result = cb(validationTypes);
@@ -16,12 +17,19 @@ function makeValidation(cb) {
   }
 
   Object.keys(checks).forEach((key) => {
-    const { type } = checks[key];
+    const { type, options } = checks[key];
     const value = payload[key];
 
     switch (type) {
       case validationTypes.string: {
-        const { confirm, message } = isString(value);
+        const { confirm, message } = isString({ value, options });
+        if (!confirm) {
+          errors[key] = message;
+        }
+        break;
+      }
+      case validationTypes.enum: {
+        const { confirm, message } = isEnum({ value, options });
         if (!confirm) {
           errors[key] = message;
         }
@@ -36,4 +44,4 @@ function makeValidation(cb) {
   return getError({ success: Object.values(errors).length === 0, errors });
 }
 
-module.exports = makeValidation;
+export default makeValidation;

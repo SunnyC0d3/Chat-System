@@ -5,17 +5,21 @@ import logger from 'morgan';
 import cors from 'cors';
 
 // Import required routes
-import indexRouter from './routes/index';
-import userRouter from './routes/user';
-import chatRoomRouter from './routes/chatRoom';
-import deleteRouter from './routes/delete';
+import indexRouter from './routes/index.js';
+import userRouter from './routes/user.js';
+import chatRoomRouter from './routes/chatRoom.js';
+import deleteRouter from './routes/delete.js';
+
+// Import config modules
+import dotenv from './config/dotenv.js';
+import './config/mongodb.js';
 
 // Import required middleware
-import { decode } from './middlewares/jwt';
+import { decode } from './middlewares/jwt.js';
 
 // Init app
 const app = express();
-const port = process.env.PORT || '3000';
+const port = dotenv.port || '3000';
 app.set('port', port);
 
 app.use(logger('dev'));
@@ -38,14 +42,3 @@ server.listen(port);
 server.on('listening', () => {
   console.log(`Listening on port:: http://localhost:${port}/`);
 });
-
-//import validate from './modules/components/validate';
-
-// const validated = validate((types) => ({
-//   payload: {
-//     firstname: 2,
-//   },
-//   checks: {
-//     firstname: { type: types.string },
-//   },
-// }));
