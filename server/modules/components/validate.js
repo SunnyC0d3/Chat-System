@@ -2,6 +2,7 @@ import validationTypes from './validationTypes.js';
 import getError from './errors.js';
 import isString from './validators/isString.js';
 import isEnum from './validators/isEnum.js';
+import isArray from './validators/checks/isArray.js';
 
 function makeValidation(cb) {
   const result = cb(validationTypes);
@@ -30,6 +31,13 @@ function makeValidation(cb) {
       }
       case validationTypes.enum: {
         const { confirm, message } = isEnum({ value, options });
+        if (!confirm) {
+          errors[key] = message;
+        }
+        break;
+      }
+      case validationTypes.array: {
+        const { confirm, message } = isArray({ value, options });
         if (!confirm) {
           errors[key] = message;
         }

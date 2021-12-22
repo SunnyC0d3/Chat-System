@@ -3,6 +3,7 @@ import http from 'http';
 import express from 'express';
 import logger from 'morgan';
 import cors from 'cors';
+import { Server } from 'socket.io';
 
 // Import required routes
 import indexRouter from './routes/index.js';
@@ -16,6 +17,9 @@ import './config/mongodb.js';
 
 // Import required middleware
 import { decode } from './middlewares/jwt.js';
+
+// socket configuration
+import WebSockets from './utils/WebSockets.js';
 
 // Init app
 const app = express();
@@ -37,6 +41,8 @@ app.use('*', (req, res) => { res.status(404).json({ success: false, message: 'AP
 
 // Create HTTP server.
 const server = http.createServer(app);
+global.io = new Server(server);
+global.io.on('connection', WebSockets.connection);
 server.listen(port);
 // Event listener for HTTP server 'listening' event.
 server.on('listening', () => {
