@@ -2,7 +2,7 @@ import validationTypes from './validationTypes.js';
 import getError from './errors.js';
 import isString from './validators/isString.js';
 import isEnum from './validators/isEnum.js';
-import isArray from './validators/checks/isArray.js';
+import isArray from './validators/isArray.js';
 
 function makeValidation(cb) {
   const result = cb(validationTypes);

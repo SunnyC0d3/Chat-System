@@ -58,4 +58,9 @@ chatRoomSchema.statics.initiateChat = async function (userIds, type, chatInitiat
   }
 };
 
+chatRoomSchema.statics.getChatRoomByRoomId = async function (roomId) {
+  const room = await this.findOne({ _id: roomId });
+  return room;
+};
+
 export default mongoose.model('ChatRoom', chatRoomSchema);
