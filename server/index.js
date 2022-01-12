@@ -5,6 +5,7 @@ import logger from 'morgan';
 import cors from 'cors';
 import { Server } from 'socket.io';
 import { createBlackList } from 'jwt-blacklist';
+import cookieParser from 'cookie-parser';
 
 // Import required routes
 import indexRouter from './routes/index.js';
@@ -29,7 +30,8 @@ app.set('port', port);
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cors());
+app.use(cors({credentials: true, origin: ['http://localhost:3000']}));
+app.use(cookieParser());
 
 app.use('/', indexRouter);
 app.use('/users', userRouter);
@@ -42,8 +44,8 @@ app.use('*', (req, res) => { res.status(404).json({ success: false, message: 'AP
 const server = http.createServer(app);
 global.io = new Server(server, {
   cors: {
-    origin: 'http://localhost:3000',
-    methods: ['GET', 'POST', 'PUT'],
+    origin: ['http://localhost:3000'],
+    credentials: true,
   },
 });
 global.io.on('connection', (socket) => { WebSockets.connection(socket); });

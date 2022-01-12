@@ -6,6 +6,7 @@ class WebSockets {
   }
 
   connection(socket) {
+
     // event fired when the chat room is disconnected
     socket.on('disconnect', () => {
       this.users = this.users.filter((user) => user.socketId !== socket.id);
@@ -16,6 +17,7 @@ class WebSockets {
         socketId: socket.id,
         userId,
       });
+      socket.emit('sendUsers', this.users);
     });
     // subscribe person to chat & other user as well
     socket.on('subscribe', (room, otherUserId = '') => {
@@ -26,6 +28,7 @@ class WebSockets {
     socket.on('unsubscribe', (room) => {
       socket.leave(room);
     });
+
   }
 
   subscribeOtherUser(room, otherUserId) {

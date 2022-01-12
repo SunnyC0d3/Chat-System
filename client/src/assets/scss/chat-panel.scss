@@ -1,0 +1,58 @@
+.chat-panel {
+    @apply relative w-full h-screen p-8 overflow-hidden bg-neutral-300;
+    & .messages {
+        @apply max-w-lg w-full mx-auto overflow-y-scroll max-h-screen;
+        padding-bottom: 152px;
+        & .message {
+            @apply p-4 rounded-md w-full max-w-xs text-white mb-8 relative flex;
+            &:before {
+                content: '';
+                @apply border-8  absolute w-0 h-0;
+            }
+            &--current-user {
+                @apply bg-purple-600 ml-auto;
+                &:before {
+                    right: 0px;
+                    bottom: -12px;
+                    @apply border-t-purple-600 border-r-purple-600 border-l-transparent border-b-transparent;
+                }
+            }
+            &--other-user {
+                @apply bg-purple-900;
+                &:before {
+                    left: 0px;
+                    bottom: -12px;
+                    @apply border-t-purple-900 border-l-purple-900 border-r-transparent border-b-transparent;
+                }
+            }
+        }
+    }
+    & .input-field {
+        @apply absolute bottom-0 left-0 py-8 px-4 bg-gray-600 w-full flex justify-center z-10;
+        & textarea {
+            @apply p-4 rounded-lg w-full h-14 max-w-lg outline-none resize-none;
+        }
+    }
+    &.darkmode {
+        @apply bg-neutral-500;
+        & .messages {
+            & .message {
+                &--current-user {
+                    @apply bg-green-600;
+                    &:before {
+                        @apply border-t-green-600 border-r-green-600;
+                    }
+                }
+                &--other-user {
+                    @apply bg-green-700;
+                    &:before {
+                        @apply border-t-green-700 border-l-green-700;
+                    }
+                }
+            }
+        }
+        & .input-field {
+            @apply bg-neutral-800;
+        }
+    }
+}

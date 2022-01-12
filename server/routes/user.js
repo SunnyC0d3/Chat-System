@@ -1,5 +1,7 @@
 import express from 'express';
 import user from '../controllers/user.js';
+// Import required middleware
+import { blacklist } from '../middlewares/jwt.js';
 
 const router = express.Router();
 

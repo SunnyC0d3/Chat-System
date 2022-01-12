@@ -16,7 +16,11 @@ export const encode = async (req, res, next) => {
     const authToken = jwt.sign(payload, SECRET_KEY, {
       expiresIn: '1d',
     });
-    req.authToken = authToken;
+    res.cookie('token', authToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      expires: authToken.exp,
+    });
     return next();
   } catch (error) {
     return res.status(400).json({ success: false, error });
@@ -24,15 +28,15 @@ export const encode = async (req, res, next) => {
 };
 
 export const decode = async (req, res, next) => {
-  if (!req.headers['authorization']) {
+  const { token } = req.cookies;
+  if (!token) {
     return res.status(400).json({ success: false, error: 'No access token provided' });
   }
-  const accessToken = req.headers.authorization.split(' ')[1];
 
   try {
-    global.bl.has(accessToken).then((value) => {
+    global.bl.has(token).then((value) => {
       if (!value) {
-        const decoded = jwt.verify(accessToken, SECRET_KEY);
+        const decoded = jwt.verify(token, SECRET_KEY);
         req.userId = decoded.userId;
         req.userType = decoded.userType;
         return next();
@@ -45,13 +49,13 @@ export const decode = async (req, res, next) => {
 };
 
 export const blacklist = async (req, res, next) => {
-  if (!req.headers['authorization']) {
+  const { token } = req.cookies;
+  if (!token) {
     return res.status(400).json({ success: false, error: 'No access token provided' });
   }
-  const accessToken = req.headers.authorization.split(' ')[1];
 
   try {
-    global.bl.add(accessToken).then((value) => { next(); });
+    global.bl.add(token).then((value) => { res.clearCookie('token'); next(); });
   } catch (error) {
     return res.status(401).json({ success: false, error });
   }

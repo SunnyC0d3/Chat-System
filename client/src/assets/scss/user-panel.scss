@@ -1,0 +1,106 @@
+.user-panel {
+    @apply absolute top-0 left-0 w-9/12 sm:w-80 h-full bg-white drop-shadow-lg -translate-x-full transition-all z-10;
+    & .settings {
+        @apply flex items-center justify-end border border-t-0 border-r-0 border-l-0 border-b-gray-200 p-2;
+        & i {
+            @apply mx-2 text-xl text-purple-400;
+            &:hover {
+                @apply cursor-pointer text-purple-900;
+            }
+        }
+    }
+    & .users {
+        @apply h-full max-h-screen overflow-y-scroll;
+        padding-bottom: 193px;
+        & .user {
+            @apply flex p-4 items-center;
+            &:hover {
+                @apply bg-fuchsia-200 cursor-pointer;
+            }
+            &:not(:last-child) {
+                @apply border border-t-0 border-r-0 border-l-0 border-b-fuchsia-200;
+            }
+            &__image {
+                @apply relative flex justify-center p-5 bg-purple-400 rounded-full;
+                & i {
+                    @apply text-xl z-10 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2;
+                }
+            }
+            &__name {
+                @apply ml-4;
+            }
+            & i.fa-power-off,
+            & i.fa-trash-alt {
+                @apply text-purple-400;
+                &:hover {
+                    @apply cursor-pointer text-purple-900;
+                }
+            }
+            & i.fa-power-off {
+                @apply ml-auto;
+            }
+            & i.fa-trash-alt {
+                @apply ml-4;
+            }
+            &__status {
+                @apply block rounded-full w-4 h-4 bg-red-500 ml-4;
+                &--online {
+                    @apply bg-green-500;
+                }
+            }
+        }
+    }
+    &.active {
+        @apply translate-x-0;
+        & i.fa-arrow-right {
+            @apply rotate-180;
+        }
+    }
+    & i.fa-arrow-right {
+        @apply absolute top-0 -right-12 text-2xl p-2;
+        &:hover {
+            @apply cursor-pointer;
+        }
+    }
+    &.darkmode {
+        @apply bg-neutral-800;
+        & i.fa-arrow-right {
+            @apply text-white;
+        }
+        & .settings {
+            @apply border-b-gray-200;
+            & i {
+                @apply text-green-600;
+                &:hover {
+                    @apply text-green-200;
+                }
+            }
+        }
+        & .users {
+            & .user {
+                @apply text-white;
+                &:hover {
+                    @apply bg-green-200 text-neutral-800;
+                }
+                &:not(:last-child) {
+                    @apply border-b-gray-200;
+                }
+                &__image {
+                    @apply bg-green-600;
+                }
+                & i.fa-power-off,
+                & i.fa-trash-alt {
+                    @apply text-green-600;
+                    &:hover {
+                        @apply cursor-pointer text-green-200;
+                    }
+                }
+                &__status {
+                    &--online {
+                        @apply bg-blue-500;
+                    }
+                }
+            }
+        }
+    }
+}
