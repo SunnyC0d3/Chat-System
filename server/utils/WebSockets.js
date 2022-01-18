@@ -7,24 +7,40 @@ class WebSockets {
 
   connection(socket) {
 
-    // event fired when the chat room is disconnected
-    socket.on('disconnect', () => {
-      this.users = this.users.filter((user) => user.socketId !== socket.id);
+    socket.on('login_logout', (userId, userLoggedIn, type) => {
+      if(type === 'changeLoginStatus') {
+        this.users.forEach((user) => {
+          if(user.userId === userId) {
+            user.userLoggedIn = userLoggedIn;
+          }
+        });
+      }
+
+      if (type === 'addRemoveUser') {
+        this.users.push({
+          socketId: socket.id,
+          userId,
+          userLoggedIn
+        });
+      }
+
+      console.log(this.users);
+      global.io.sockets.emit('getUsers', this.users, false);
     });
-    // add identity of user mapped to the socket id
-    socket.on('identity', (userId) => {
-      this.users.push({
-        socketId: socket.id,
-        userId,
-      });
-      socket.emit('sendUsers', this.users);
+
+    socket.on('do_refresh', () => {
+      global.io.sockets.emit('getUsers', this.users, true);
     });
-    // subscribe person to chat & other user as well
+
+    socket.on('deleteUser', (userId) => {
+      this.users = this.users.filter((user) => { return user.userId !== userId });
+    });
+    
     socket.on('subscribe', (room, otherUserId = '') => {
       this.subscribeOtherUser(room, otherUserId);
       socket.join(room);
     });
-    // mute a chat room
+    
     socket.on('unsubscribe', (room) => {
       socket.leave(room);
     });

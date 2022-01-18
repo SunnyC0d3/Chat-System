@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { socket } from '../Socket';
 
 import { activateDarkmode, updateDialog } from '../reducers/global';
-import { updateUsers } from '../reducers/users';
+import { updateUserOnThisDevice } from '../reducers/users';
 
-import { useGetUsersQuery, useLogoutUserMutation, useDeleteUserMutation } from '../queries/api';
+import { useLogoutUserMutation, useDeleteUserMutation } from '../queries/api';
 
 function UserPanel() {
 
@@ -15,22 +16,8 @@ function UserPanel() {
     const userOnThisDevice = useSelector(state => state.usersStore.userOnThisDevice);
     const dispatch = useDispatch();
 
-    const { data, error, refetch, isLoading } = useGetUsersQuery();
     const [ logoutUser ] = useLogoutUserMutation();
     const [ deleteUser ] = useDeleteUserMutation();
-
-    useEffect(function component_updateUsers() {
-        if(!isLoading) {
-            dispatch(updateUsers(data['users']));
-        }
-    }, [data, dispatch, isLoading]);
-
-    function updatedDialog(boolean, user) {
-        dispatch(updateDialog({
-            opened: boolean,
-            currentUserClicked: user
-        }));
-    }
 
     return (
         <div className={`user-panel ${userPanelActive ? 'active' : ''} ${darkmode ? 'darkmode' : ''}`}>
@@ -41,30 +28,39 @@ function UserPanel() {
             </div>
             <div className="users">
                 { users.map((user) => (
-                    <div className="user" key={ user._id }>
+                    <div className="user" key={ user.userId }>
                         <div className="user__image">
                             <i className="fas fa-user"></i>
                         </div>
-                        <p className="user__name">{ user.firstName + ' ' + user.lastName}</p>
-                        <i className="fas fa-power-off" onClick={ () => { updatedDialog(true, user) } }></i>
-                        <i className="fas fa-trash-alt" onClick={ ()  => { 
-                                if (userOnThisDevice.user) {
-                                    if (user._id === userOnThisDevice.user._id && userOnThisDevice.loggedIn) {
-                                        logoutUser();
-                                        deleteUser(userOnThisDevice.user._id).unwrap().then((response) => {
-                                            refetch();
-                                        });
-                                    }
+                        <p className="user__name">{ user.userFirstName + ' ' + user.userLastName}</p>
+                        <i className="fas fa-power-off" onClick={ () => {
+                            if(userOnThisDevice.length === 0) {
+                                if(!user.userLoggedIn && !userOnThisDevice.userLoggedIn) {
+                                    dispatch(updateDialog({
+                                        opened: true,
+                                        currentUserClicked: user
+                                    }));
                                 }
-
-                                deleteUser(user._id).unwrap().then((response) => {
-                                    refetch();
-                                });
+                            }                        
+                        } }></i>
+                        <i className="fas fa-trash-alt" onClick={ ()  => { 
+                            if(userOnThisDevice) {
+                                if(user.userId === userOnThisDevice.userId && userOnThisDevice.userLoggedIn) {
+                                    logoutUser();
+                                    socket.emit('login_logout', user.userId, false, 'changeLoginStatus');
+                                    deleteUser(user.userId).unwrap().then((response) => {
+                                        socket.emit('deleteUser', user.userId);
+                                        socket.emit('do_refresh', '');
+                                    });
+                                    dispatch(updateUserOnThisDevice([]));
+                                }
+                            }
                         }}></i>
-                        { userOnThisDevice.loggedIn && user._id === userOnThisDevice.user._id ? 
-                            <span className="user__status user__status--online"></span>
+                        { 
+                        user.userLoggedIn ? 
+                            <span className="user__status user__status--online"></span> 
                         : 
-                            <span className="user__status"></span>
+                            <span className="user__status"></span>                       
                         }
                     </div>
                 )) }

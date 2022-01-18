@@ -3,10 +3,10 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 export const api = createApi({
     reducerPath: 'api',
     baseQuery: fetchBaseQuery({ baseUrl: process.env.REACT_APP_SERVER_CONNECTION }),
+    tagTypes: ['User'],
     endpoints: (builder) => ({
         getUsers: builder.query({
             query: () => 'users/',
-            keepUnusedDataFor: 0,
         }),
         getUserToken: builder.mutation({
             query: (id) => ({ 
@@ -26,6 +26,7 @@ export const api = createApi({
             query: (userId) => ({
                 url: `users/${userId}`,
                 method: 'DELETE',
+                invalidatesTags: ['User'],
             }),
         }),
         getRoom: builder.query({

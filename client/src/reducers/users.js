@@ -4,8 +4,7 @@ export const users = createSlice({
   name: 'users',
   initialState: {
     users: [],
-    userOnThisDevice: [],
-    usersOnOtherDevices: [],
+    userOnThisDevice: []
   },
   reducers: {
     updateUsers: (state, action) => {
