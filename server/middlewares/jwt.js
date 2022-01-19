@@ -1,4 +1,6 @@
 import jwt from 'jsonwebtoken';
+import { v4 as uuidv4 } from 'uuid';
+
 import UserModel from '../models/user.js';
 import dotenv from '../config/dotenv.js';
 
@@ -19,6 +21,9 @@ export const encode = async (req, res, next) => {
     res.cookie('token', authToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
+      expires: authToken.exp,
+    });
+    res.cookie('uniqueDeviceID', uuidv4().replace(/\-/g, ''), {
       expires: authToken.exp,
     });
     return next();
@@ -55,7 +60,7 @@ export const blacklist = async (req, res, next) => {
   }
 
   try {
-    global.bl.add(token).then((value) => { res.clearCookie('token'); next(); });
+    global.bl.add(token).then((value) => { res.clearCookie('token'); res.clearCookie('uniqueDeviceID'); next(); });
   } catch (error) {
     return res.status(401).json({ success: false, error });
   }

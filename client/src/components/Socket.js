@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { socket } from '../Socket';
+import { socket, manager } from '../Socket';
+
+import Cookies from 'js-cookie';
 
 import { updateUsers, updateUserOnThisDevice } from '../reducers/users';
 
@@ -52,7 +54,7 @@ function Socket() {
                             const tempUser = { ...user };
                             tempUser.userLoggedIn = socketUser.userLoggedIn;
                             tempUsers[index] = tempUser;
-                            if(socket.id === socketUser.socketId && tempUser.userLoggedIn) {
+                            if(Cookies.get('uniqueDeviceID') === socketUser.socketId && tempUser.userLoggedIn) {
                                 dispatch(updateUserOnThisDevice(tempUsers[index]));
                             }
                         }

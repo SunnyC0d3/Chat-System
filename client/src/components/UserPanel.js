@@ -24,7 +24,13 @@ function UserPanel() {
             <div className="settings">
                 <i className="fas fa-sun" onClick={ () => { dispatch(activateDarkmode(false)) } }></i>
                 <i className="fas fa-moon" onClick={ () => { dispatch(activateDarkmode(true)) } }></i>
-                <i className="fas fa-plus"></i>
+                <i className="fas fa-plus" onClick={ () => {
+                    dispatch(updateDialog({
+                        opened: true,
+                        currentUserClicked: '',
+                        state: 'createUser'
+                    }));
+                } }></i>
             </div>
             <div className="users">
                 { users.map((user) => (
@@ -38,7 +44,8 @@ function UserPanel() {
                                 if(!user.userLoggedIn && !userOnThisDevice.userLoggedIn) {
                                     dispatch(updateDialog({
                                         opened: true,
-                                        currentUserClicked: user
+                                        currentUserClicked: user,
+                                        state: 'login'
                                     }));
                                 }
                             }                        
@@ -47,7 +54,7 @@ function UserPanel() {
                             if(userOnThisDevice) {
                                 if(user.userId === userOnThisDevice.userId && userOnThisDevice.userLoggedIn) {
                                     logoutUser();
-                                    socket.emit('login_logout', user.userId, false, 'changeLoginStatus');
+                                    socket.emit('login_logout', user.userId, false, '', 'changeLoginStatus');
                                     deleteUser(user.userId).unwrap().then((response) => {
                                         socket.emit('deleteUser', user.userId);
                                         socket.emit('do_refresh', '');
@@ -56,12 +63,7 @@ function UserPanel() {
                                 }
                             }
                         }}></i>
-                        { 
-                        user.userLoggedIn ? 
-                            <span className="user__status user__status--online"></span> 
-                        : 
-                            <span className="user__status"></span>                       
-                        }
+                        <span className={ `user__status ${ user.userLoggedIn ? 'user__status--online' : '' }` }></span> 
                     </div>
                 )) }
             </div>

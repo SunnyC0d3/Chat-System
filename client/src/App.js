@@ -2,6 +2,7 @@ import './assets/scss/main.scss';
 //Import Redux
 import { store } from './Store';
 import { Provider } from 'react-redux';
+
 //import components
 import Socket from './components/Socket';
 import Dialog from './components/Dialog';

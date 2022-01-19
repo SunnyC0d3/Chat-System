@@ -7,6 +7,7 @@ export const global = createSlice({
     dialog: {
       opened: false,
       currentUserClicked: '',
+      state: ''
     },
   },
   reducers: {

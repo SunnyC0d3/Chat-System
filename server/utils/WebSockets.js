@@ -7,7 +7,7 @@ class WebSockets {
 
   connection(socket) {
 
-    socket.on('login_logout', (userId, userLoggedIn, type) => {
+    socket.on('login_logout', (userId, userLoggedIn, uniqueID, type) => {
       if(type === 'changeLoginStatus') {
         this.users.forEach((user) => {
           if(user.userId === userId) {
@@ -18,7 +18,7 @@ class WebSockets {
 
       if (type === 'addRemoveUser') {
         this.users.push({
-          socketId: socket.id,
+          socketId: uniqueID,
           userId,
           userLoggedIn
         });
