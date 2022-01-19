@@ -7,7 +7,7 @@ import Cookies from 'js-cookie';
 import { updateDialog } from '../reducers/global';
 import { updateUserOnThisDevice } from '../reducers/users';
 
-import { useGetUserTokenMutation } from '../queries/api';
+import { useUserTokenMutation, useMakeUserMutation } from '../queries/api';
 
 function Dialog() {
 
@@ -15,13 +15,15 @@ function Dialog() {
     const dialogState = useSelector(state => state.globalStore.dialog);
     const dispatch = useDispatch();
 
-    const [ getUserToken ] = useGetUserTokenMutation();
+    const [ userToken ] = useUserTokenMutation();
+    const [ makeUser ] = useMakeUserMutation();
 
     const [createUser, setCreateUser] = useState({
         firstName: '',
         lastName: '',
         type: ''
     });
+    const [flashMessage, setFlashMessage] = useState('');
 
     const handleFirstNameInputChange = (event) => {
         event.persist();
@@ -49,7 +51,29 @@ function Dialog() {
 
     function handleSubmit(event) {
         event.preventDefault();
-        console.log(createUser);
+        setFlashMessage('');
+
+        if(!/^[A-Za-z-]+$/.test(createUser.firstName) || !/^[A-Za-z-]+$/.test(createUser.lastName) || createUser.type === '') {
+            if(createUser.type === '') {
+                setFlashMessage('Type is not selected.');
+            }
+            if(!/^[A-Za-z-]+$/.test(createUser.lastName)) {
+                setFlashMessage('Lastname value is incorrect or empty.');
+            }
+            if(!/^[A-Za-z-]+$/.test(createUser.firstName)) {
+                setFlashMessage('Firstname value is incorrect or empty.');
+            }
+        } else {
+            makeUser(createUser).unwrap().then((response) => { 
+                socket.emit('do_refresh', '');
+                dispatch(updateDialog({
+                    opened: false,
+                    currentUserClicked: '',
+                    state: ''
+                }));
+            });
+        }
+
     }
 
     if(dialogState.state === 'login') {
@@ -64,7 +88,7 @@ function Dialog() {
                 <h3>Log in as: <span>{ dialogState.currentUserClicked.userFirstName + ' ' + dialogState.currentUserClicked.userLastName }</span></h3>
                 <div className="btns">
                     <button className="btns__btn btns__btn--yes" onClick={ () => { 
-                        getUserToken(dialogState.currentUserClicked.userId).unwrap().then((response) => {                 
+                        userToken(dialogState.currentUserClicked.userId).unwrap().then((response) => {                 
                             dispatch(updateUserOnThisDevice(dialogState.currentUserClicked));
                             socket.emit('login_logout', dialogState.currentUserClicked.userId, true, Cookies.get('uniqueDeviceID'), 'addRemoveUser');
                             dispatch(updateDialog({
@@ -94,10 +118,12 @@ function Dialog() {
                         currentUserClicked: '',
                     })); } }></i>
                 <h3>Create new user:</h3>
+                <span className="error block my-2 text-sm text-red-400">{ flashMessage }</span>
                 <form onSubmit={ handleSubmit }>
                     <input type="text" placeholder="Firstname" value={ createUser.firstName } onChange={ handleFirstNameInputChange } />
                     <input type="text" placeholder="Lastname" value={ createUser.lastName } onChange={ handleLastNameInputChange } />
                     <select onChange={ handleTypeInputChange }>
+                        <option className="hidden">--Choose Type--</option>
                         <option value="consumer">Consumer</option>
                         <option value="support">Support</option>
                     </select>

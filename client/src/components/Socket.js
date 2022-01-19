@@ -72,5 +72,3 @@ function Socket() {
 }
 
 export default Socket;
-
-//create user and refetch

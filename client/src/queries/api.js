@@ -3,16 +3,23 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 export const api = createApi({
     reducerPath: 'api',
     baseQuery: fetchBaseQuery({ baseUrl: process.env.REACT_APP_SERVER_CONNECTION }),
-    tagTypes: ['User'],
     endpoints: (builder) => ({
         getUsers: builder.query({
-            query: () => 'users/',
+            query: () => 'users',
         }),
-        getUserToken: builder.mutation({
+        userToken: builder.mutation({
             query: (id) => ({ 
                 url: `login/${id}`,
                 method: 'POST',
                 credentials: 'include'
+            }),
+        }),
+        makeUser: builder.mutation({
+            query: ({ ...user }) => ({
+                url: `users`,
+                method: 'POST',
+                body: user,
+                //credentials: 'include'
             }),
         }),
         logoutUser: builder.mutation({
@@ -26,7 +33,6 @@ export const api = createApi({
             query: (userId) => ({
                 url: `users/${userId}`,
                 method: 'DELETE',
-                invalidatesTags: ['User'],
             }),
         }),
         getRoom: builder.query({
@@ -40,8 +46,9 @@ export const api = createApi({
 
 export const { 
     useGetUsersQuery, 
-    useGetUserTokenMutation, 
+    useUserTokenMutation, 
     useGetRoomQuery,
+    useMakeUserMutation,
     useLogoutUserMutation,
     useDeleteUserMutation,
 } = api
