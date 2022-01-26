@@ -133,6 +133,19 @@ function Dialog() {
         );
     }
 
+    if(dialogState.state === 'notLoggedIn') {
+        return (
+            <div className={`dialog ${darkmode ? 'darkmode' : ''} ${dialogState.opened ? 'active' : ''}`}>
+                <i className="fas fa-times" onClick={ () => { 
+                    dispatch(updateDialog({
+                        opened: false,
+                        currentUserClicked: '',
+                    })); } }></i>
+                <h3>You need to login as a User, in order to send messages.</h3>
+            </div>
+        );
+    }
+
     return null;
 
 }

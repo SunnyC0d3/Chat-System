@@ -6,6 +6,7 @@ import UserModel, { USER_TYPES } from '../models/user.js';
 
 export default {
   initiate: async (req, res) => {
+    console.log(req.body);
     try {
       const validation = validate((types) => ({
         payload: req.body,

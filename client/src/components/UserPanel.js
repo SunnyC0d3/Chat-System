@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { socket } from '../Socket';
 
-import { activateDarkmode, updateDialog } from '../reducers/global';
+import { activateDarkmode, updateDialog, updateChatRoom, updateSocketMessages } from '../reducers/global';
 import { updateUserOnThisDevice } from '../reducers/users';
 
-import { useLogoutUserMutation, useDeleteUserMutation } from '../queries/api';
+import { useLogoutUserMutation, useDeleteUserMutation, useInitiateChatMutation } from '../queries/api';
 
 function UserPanel() {
 
@@ -18,6 +18,7 @@ function UserPanel() {
 
     const [ logoutUser ] = useLogoutUserMutation();
     const [ deleteUser ] = useDeleteUserMutation();
+    const [ initiateChat ] = useInitiateChatMutation();
 
     return (
         <div className={`user-panel ${userPanelActive ? 'active' : ''} ${darkmode ? 'darkmode' : ''}`}>
@@ -38,7 +39,30 @@ function UserPanel() {
                         <div className="user__image">
                             <i className="fas fa-user"></i>
                         </div>
-                        <p className="user__name">{ user.userFirstName + ' ' + user.userLastName}</p>
+                        <p className="user__name" onClick={ () => {
+                            if(userOnThisDevice.userLoggedIn) {
+                                if(userOnThisDevice.userId !== user.userId) {
+                                    let type = userOnThisDevice.userType + '-to-' + user.userType;
+
+                                    if(type === 'support-to-consumer') {
+                                        type = 'consumer-to-support';
+                                    }
+
+                                    initiateChat({ userIds: [user.userId, userOnThisDevice.userId], type }).unwrap().then((response) => {
+                                        dispatch(updateChatRoom({ id: response.chatRoom.chatRoomId }));
+                                        dispatch(updateSocketMessages([]));
+                                        socket.emit('subscribe', response.chatRoom.chatRoomId, user.userId);
+                                    });
+
+                                }  
+                            } else {
+                                dispatch(updateDialog({
+                                    opened: true,
+                                    currentUserClicked: user,
+                                    state: 'notLoggedIn'
+                                }));
+                            }
+                        }}>{ user.userFirstName + ' ' + user.userLastName}</p>
                         <i className="fas fa-power-off" onClick={ () => {
                             if(userOnThisDevice.length === 0) {
                                 if(!user.userLoggedIn && !userOnThisDevice.userLoggedIn) {

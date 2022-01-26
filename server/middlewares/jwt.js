@@ -41,12 +41,17 @@ export const decode = async (req, res, next) => {
   try {
     global.bl.has(token).then((value) => {
       if (!value) {
-        const decoded = jwt.verify(token, SECRET_KEY);
-        req.userId = decoded.userId;
-        req.userType = decoded.userType;
-        return next();
+        jwt.verify(token, SECRET_KEY, (err, decoded) => {
+          if (err) {
+            return res.status(401).json({ success: false, message: 'Token has expired, try logging in.' });
+          }
+          req.userId = decoded.userId;
+          req.userType = decoded.userType;
+          return next();
+        });
+      } else {
+        return res.status(401).json({ success: false, message: 'Token is blacklisted.' });
       }
-      return res.status(401).json({ success: false, message: 'Token is blacklisted.' });
     });
   } catch (error) {
     return res.status(401).json({ success: false, error });

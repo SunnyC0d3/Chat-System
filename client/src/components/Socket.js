@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { socket, manager } from '../Socket';
+import { socket } from '../Socket';
 
 import Cookies from 'js-cookie';
 
 import { updateUsers, updateUserOnThisDevice } from '../reducers/users';
+import { updateSocketMessages } from '../reducers/global';
 
 import { useGetUsersQuery } from '../queries/api';
 
@@ -19,16 +20,18 @@ function Socket() {
         socket.on('connect', () => {
             socket.emit('login_logout');
         });
-     }, []);
 
-     useEffect(() => {
         socket.on('getUsers', (socketUsers, refresh) => {
             if(refresh) {
                 refetch();
             }
             setSocketUsers(socketUsers);
         });
-     }, [refetch]);
+
+        socket.on('new message', (message, fresh) => {
+            dispatch(updateSocketMessages( message.message ));
+        });
+     }, [dispatch, refetch]);
 
      useEffect(() => {
 
@@ -54,7 +57,7 @@ function Socket() {
                             const tempUser = { ...user };
                             tempUser.userLoggedIn = socketUser.userLoggedIn;
                             tempUsers[index] = tempUser;
-                            if(Cookies.get('uniqueDeviceID') === socketUser.socketId && tempUser.userLoggedIn) {
+                            if(Cookies.get('uniqueDeviceID') === socketUser.deviceUniqueId && tempUser.userLoggedIn) {
                                 dispatch(updateUserOnThisDevice(tempUsers[index]));
                             }
                         }

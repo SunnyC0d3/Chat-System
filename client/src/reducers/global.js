@@ -9,6 +9,10 @@ export const global = createSlice({
       currentUserClicked: '',
       state: ''
     },
+    chatRoom: {
+      id: ''
+    },
+    socketMessages: []
   },
   reducers: {
     activateDarkmode: (state, action) => {
@@ -17,10 +21,20 @@ export const global = createSlice({
     updateDialog: (state, action) => {
       state.dialog = action.payload;
     },
+    updateChatRoom: (state, action) => {
+      state.chatRoom = { ...action.payload };
+    },
+    updateSocketMessages: (state, action) => {
+      if(action.payload.length !== 0) {
+        state.socketMessages = [ ...state.socketMessages, action.payload ];
+      } else {
+        state.socketMessages = action.payload;
+      }
+    },
   }
 })
 
 // Action creators are generated for each case reducer function
-export const { activateDarkmode, updateDialog } = global.actions
+export const { activateDarkmode, updateDialog, updateChatRoom, updateSocketMessages } = global.actions
 
 export default global.reducer

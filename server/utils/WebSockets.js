@@ -18,13 +18,13 @@ class WebSockets {
 
       if (type === 'addRemoveUser') {
         this.users.push({
-          socketId: uniqueID,
+          socketId: socket.id,
+          deviceUniqueId: uniqueID,
           userId,
           userLoggedIn
         });
       }
 
-      console.log(this.users);
       global.io.sockets.emit('getUsers', this.users, false);
     });
 

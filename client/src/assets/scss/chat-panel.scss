@@ -1,8 +1,8 @@
 .chat-panel {
     @apply relative w-full h-screen p-8 overflow-hidden bg-neutral-300;
     & .messages {
-        @apply max-w-lg w-full mx-auto overflow-y-scroll max-h-screen;
-        padding-bottom: 152px;
+        @apply max-w-lg w-full mx-auto overflow-y-scroll;
+        max-height: calc(100vh - 152px);
         & .message {
             @apply p-4 rounded-md w-full max-w-xs text-white mb-8 relative flex;
             &:before {
@@ -29,8 +29,14 @@
     }
     & .input-field {
         @apply absolute bottom-0 left-0 py-8 px-4 bg-gray-600 w-full flex justify-center z-10;
-        & textarea {
-            @apply p-4 rounded-lg w-full h-14 max-w-lg outline-none resize-none;
+        & form {
+            @apply w-full max-w-lg flex items-center;
+            & textarea {
+                @apply p-4 rounded-tl-lg rounded-bl-lg h-14 max-w-lg outline-none resize-none w-4/5;
+            }
+            & input[type="submit"] {
+                @apply w-1/5 bg-green-400 text-white p-4 rounded-tr-lg rounded-br-lg;
+            }
         }
     }
     &.darkmode {

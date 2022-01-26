@@ -3,6 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 export const api = createApi({
     reducerPath: 'api',
     baseQuery: fetchBaseQuery({ baseUrl: process.env.REACT_APP_SERVER_CONNECTION }),
+    refetchOnMountOrArgChange: true,
     endpoints: (builder) => ({
         getUsers: builder.query({
             query: () => 'users',
@@ -19,7 +20,6 @@ export const api = createApi({
                 url: `users`,
                 method: 'POST',
                 body: user,
-                //credentials: 'include'
             }),
         }),
         logoutUser: builder.mutation({
@@ -35,20 +35,39 @@ export const api = createApi({
                 method: 'DELETE',
             }),
         }),
-        getRoom: builder.query({
-            query: (roomId) => ({
-                url: `room/${roomId}`,
-                credentials: 'include'
+        initiateChat: builder.mutation({
+            query: (arg) => ({
+                url: `room/initiate`,
+                method: 'POST',
+                body: { ...arg }, 
+                credentials: 'include',
             }),
         }),
+        postMessage: builder.mutation({
+            query: (arg) => ({
+                url: `room/${arg.roomId}/message`,
+                method: 'POST',
+                body: { ...arg }, 
+                credentials: 'include',
+            }),
+        }),
+        getChatRoomConversation: builder.query({
+            query: (roomId) => ({
+                url: `room/${roomId}`,
+                credentials: 'include',
+                providesTags: ['Messages'],
+            }),
+        })
     }),
 })
 
 export const { 
     useGetUsersQuery, 
+    useGetChatRoomConversationQuery,
     useUserTokenMutation, 
-    useGetRoomQuery,
+    useInitiateChatMutation,
     useMakeUserMutation,
     useLogoutUserMutation,
     useDeleteUserMutation,
+    usePostMessageMutation,
 } = api
