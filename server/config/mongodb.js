@@ -1,3 +1,5 @@
+// Setting up mongoose to allow connection with MongoDB
+
 import dotenv from './dotenv.js';
 import mongoose from 'mongoose';
 

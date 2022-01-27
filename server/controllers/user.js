@@ -1,6 +1,7 @@
-// Import validation
+// User Controller
+
 import validate from '../modules/components/validate.js';
-// Import User Model
+
 import UserModel, { USER_TYPES } from '../models/user.js';
 
 export default {

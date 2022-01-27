@@ -16,7 +16,6 @@ export const users = createSlice({
   }
 })
 
-// Action creators are generated for each case reducer function
 export const { updateUsers, updateUserOnThisDevice } = users.actions
 
 export default users.reducer

@@ -1,3 +1,5 @@
+// Middleware, using JWT to authenticate the right user and blacklists any expired tokens
+
 import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -65,7 +67,7 @@ export const blacklist = async (req, res, next) => {
   }
 
   try {
-    global.bl.add(token).then((value) => { res.clearCookie('token'); res.clearCookie('uniqueDeviceID'); next(); });
+    global.bl.add(token).then(() => { res.clearCookie('token'); res.clearCookie('uniqueDeviceID'); next(); });
   } catch (error) {
     return res.status(401).json({ success: false, error });
   }

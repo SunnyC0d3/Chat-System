@@ -34,7 +34,6 @@ export const global = createSlice({
   }
 })
 
-// Action creators are generated for each case reducer function
 export const { activateDarkmode, updateDialog, updateChatRoom, updateSocketMessages } = global.actions
 
 export default global.reducer

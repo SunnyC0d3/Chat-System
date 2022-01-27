@@ -1,3 +1,5 @@
+// ChatRoom Controller
+
 import validate from '../modules/components/validate.js';
 
 import ChatRoomModel, { CHAT_ROOM_TYPES } from '../models/chatroom.js';

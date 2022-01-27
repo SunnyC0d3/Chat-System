@@ -1,3 +1,5 @@
+// Index Router
+
 import express from 'express';
 import { encode, blacklist } from '../middlewares/jwt.js';
 

@@ -1,3 +1,5 @@
+// Configure dotenv so that .env environment can be accessed
+
 import dotenv from 'dotenv';
 
 dotenv.config();
